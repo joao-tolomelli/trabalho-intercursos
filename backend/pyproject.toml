@@ -1,0 +1,39 @@
+[project]
+name = "src"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "flask>=3.1.2",
+    "flask-jwt-extended>=4.7.1",
+    "flask-migrate>=4.1.0",
+    "flask-sqlalchemy>=3.1.1",
+    "marshmallow>=4.0.1",
+    "marshmallow-sqlalchemy>=1.4.2",
+    "python-dotenv>=1.1.1",
+]
+
+[dependency-groups]
+dev = [
+    "bandit>=1.8.6",
+    "black>=25.9.0",
+    "flake8>=7.3.0",
+    "isort>=6.0.1",
+    "pre-commit>=4.3.0",
+]
+
+[project.scripts]
+dev = "scripts.devserver:run"
+
+[tool.uv]
+package = true
+
+[tool.pre-commit]
+default_install_hook_types = ["pre-commit"]
+
+[tool.black]
+line-length = 88
+
+[tool.isort]
+profile = "black"
