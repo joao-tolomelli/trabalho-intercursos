@@ -28,3 +28,7 @@ class Config:
         for origin in os.getenv("CORS_ORIGINS").split(",")
         if origin.strip()
     ]
+
+    GEMINI_API_KEY = os.getenv("GEMINI_API_KEY") or print(
+        "Warning: GEMINI_API_KEY is not set. Gemini integration will not work."
+    )
