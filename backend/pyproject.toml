@@ -24,7 +24,6 @@ dev = [
 
 [project.scripts]
 dev = "scripts.devserver:run"
-app = "app:app"
 
 [tool.uv]
 package = true
