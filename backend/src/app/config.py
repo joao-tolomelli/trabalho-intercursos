@@ -29,6 +29,10 @@ class Config:
         if origin.strip()
     ]
     WTF_CSRF_TRUSTED_ORIGINS = CORS_ORIGINS
+    WTF_CSRF_SSL_STRICT = os.getenv("WTF_CSRF_SSL_STRICT", "True").lower() in (
+        "true",
+        "1",
+    )
 
     GEMINI_API_KEY = os.getenv("GEMINI_API_KEY") or print(
         "Warning: GEMINI_API_KEY is not set. Gemini integration will not work."
