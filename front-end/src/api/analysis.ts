@@ -15,6 +15,6 @@ export interface AnalysisPayload {
 }
 
 export const submitToAI = async (data: AnalysisPayload) => {
-  const response = await api.post('/analisar-perfil', data);  
-  return response.data; 
+  const response = await api.post('/classificador/analisar-perfil', data);
+  return response.data;
 };
