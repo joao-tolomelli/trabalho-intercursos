@@ -26,6 +26,7 @@ const Index = () => {
     mutationFn: submitToAI,
     onSuccess: (data) => {
       // Quando a API responder com sucesso, guardamos os dados e mudamos a tela
+      //console.log("Resposta da IA:", data); // Log para verificar o que estamos recebendo
       setAiResult(data);
       setScreen("result");
     },
@@ -64,10 +65,10 @@ const Index = () => {
 
       {/* Passamos o objeto completo da IA para o Dashboard */}
       {screen === "result" && aiResult && (
-        <ResultDashboard  category={"MEI  "} onRestart={handleRestart} />
+        <ResultDashboard data={aiResult} onRestart={handleRestart} />
       )}
     </>
   );
 };
 
-export default Index;;
+export default Index;

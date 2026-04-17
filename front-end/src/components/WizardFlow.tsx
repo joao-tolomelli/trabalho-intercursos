@@ -21,7 +21,7 @@ interface WizardFlowProps {
 
 const incomeOptions = [
   "Até R$ 3.000",
-  "Entre R$ 3.000 e R$ 6.750 (Limite MEI)",
+  "Entre R$ 3.000 e R$ 6.750",
   "Entre R$ 6.750 e R$ 15.000",
   "Acima de R$ 15.000",
   "Ainda não tenho renda fixa",
