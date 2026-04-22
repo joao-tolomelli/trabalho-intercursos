@@ -60,3 +60,36 @@ api.interceptors.request.use(async (config) => {
 
   return config;
 });
+
+// Interceptor para renovar token CSRF quando expirar
+api.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    const originalRequest = error.config;
+
+    // Se for erro 403 CSRF e ainda não tentou renovar
+    if (
+      error.response?.status === 403 &&
+      originalRequest &&
+      !originalRequest._retry &&
+      isStateChangingMethod(originalRequest.method)
+    ) {
+      originalRequest._retry = true;
+
+      try {
+        // Limpa o token expirado
+        csrfToken = null;
+
+        // Obtém um novo token
+        await initializeCsrfToken();
+
+        // Tenta novamente com o novo token
+        return api(originalRequest);
+      } catch (refreshError) {
+        return Promise.reject(refreshError);
+      }
+    }
+
+    return Promise.reject(error);
+  }
+);

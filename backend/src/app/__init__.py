@@ -1,6 +1,6 @@
-from flask import Flask
+from flask import Flask, jsonify
 from flask_cors import CORS
-from flask_wtf.csrf import CSRFProtect
+from flask_wtf.csrf import CSRFError, CSRFProtect
 
 from .config import Config
 
@@ -18,6 +18,10 @@ def create_app():
         supports_credentials=True,
         allow_headers=["Content-Type", "X-CSRFToken"],
     )
+
+    @app.errorhandler(CSRFError)
+    def handle_csrf_error(e):
+        return jsonify({"message": "CSRF token missing or invalid"}), 403
 
     from . import hooks, routes
 
