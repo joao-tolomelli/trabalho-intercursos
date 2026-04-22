@@ -17,7 +17,7 @@ interface WizardFlowProps {
     hasBenefitsOrCLT: string;
     income: string;
   }) => void;
-} 
+}
 
 const incomeOptions = [
   "Até R$ 3.000",
@@ -80,6 +80,9 @@ const WizardFlow = ({ onComplete }: WizardFlowProps) => {
     center: { opacity: 1, x: 0 },
     exit: { opacity: 0, x: -60 },
   };
+
+  // Classe utilitária para os botões de opção não vazarem no mobile
+  const choiceButtonClasses = "h-auto justify-start text-left whitespace-normal py-4 px-5";
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center px-6">
@@ -149,7 +152,7 @@ const WizardFlow = ({ onComplete }: WizardFlowProps) => {
               <h2 className="mb-8 text-2xl font-bold text-foreground md:text-3xl">O que você oferece aos seus clientes?</h2>
               <div className="flex flex-col gap-3">
                 {["Vendo Produtos (físicos ou digitais)", "Presto Serviços", "Faço os dois"].map((option) => (
-                  <Button key={option} variant={businessType === option ? "choiceSelected" : "choice"} size="lg" className="justify-start text-left" onClick={() => setBusinessType(option)}>
+                  <Button key={option} variant={businessType === option ? "choiceSelected" : "choice"} size="lg" className={choiceButtonClasses} onClick={() => setBusinessType(option)}>
                     {option}
                   </Button>
                 ))}
@@ -177,7 +180,7 @@ const WizardFlow = ({ onComplete }: WizardFlowProps) => {
               <h2 className="mb-8 text-2xl font-bold text-foreground md:text-3xl">De onde você trabalha a maior parte do tempo?</h2>
               <div className="flex flex-col gap-3">
                 {["De casa (Home Office)", "Ponto comercial alugado ou próprio", "Na rua ou vou até os clientes", "100% pela Internet"].map((option) => (
-                  <Button key={option} variant={workLocation === option ? "choiceSelected" : "choice"} size="lg" className="justify-start text-left" onClick={() => setWorkLocation(option)}>
+                  <Button key={option} variant={workLocation === option ? "choiceSelected" : "choice"} size="lg" className={choiceButtonClasses} onClick={() => setWorkLocation(option)}>
                     {option}
                   </Button>
                 ))}
@@ -188,7 +191,7 @@ const WizardFlow = ({ onComplete }: WizardFlowProps) => {
             </motion.div>
           )}
 
-          {/* STEP 3: Trabalha Sozinho? */}
+          {/* STEP 3: Equipe ou Conta Própria? */}
           {step === 3 && (
             <motion.div
               key="step3"
@@ -202,18 +205,42 @@ const WizardFlow = ({ onComplete }: WizardFlowProps) => {
                 <ArrowLeft className="h-4 w-4" /> Voltar
               </button>
               <p className="mb-2 text-sm font-medium text-muted-foreground">Passo {step + 1} de {totalSteps}</p>
-              <h2 className="mb-8 text-2xl font-bold text-foreground md:text-3xl">Você trabalha sozinho?</h2>
+              <h2 className="mb-8 text-2xl font-bold text-foreground md:text-3xl">Você tem equipe ou trabalha por conta própria?</h2>
               <div className="flex flex-col gap-3">
-                {["Sim", "Não"].map((option) => (
-                  <Button key={option} variant={worksAlone === option ? "choiceSelected" : "choice"} size="lg" className="justify-start text-left" onClick={() => setWorksAlone(option)}>
+                {[
+                  "Trabalho por conta própria (sozinho)",
+                  "Tenho equipe fixa",
+                  "Trabalho com parceiros ocasionalmente"
+                ].map((option) => (
+                  <Button 
+                    key={option} 
+                    variant={worksAlone === option ? "choiceSelected" : "choice"} 
+                    size="lg" 
+                    className={choiceButtonClasses} 
+                    onClick={() => {
+                      setWorksAlone(option);
+                      // Limpa o número de pessoas se a opção não for "equipe fixa"
+                      if (option !== "Tenho equipe fixa") {
+                        setNumberOfPeople("");
+                      }
+                    }}
+                  >
                     {option}
                   </Button>
                 ))}
               </div>
-              {worksAlone === "Não" && (
+              
+              {/* Só exibe o input de quantidade se a pessoa tiver equipe fixa */}
+              {worksAlone === "Tenho equipe fixa" && (
                 <div className="mt-6">
                   <h3 className="mb-4 text-xl font-bold text-foreground md:text-2xl">Trabalha com quantas pessoas?</h3>
-                  <input type="number" value={numberOfPeople} onChange={(e) => setNumberOfPeople(e.target.value)} placeholder="Ex: 2" className="h-12 w-full resize-none rounded-xl border-2 border-border bg-card p-4 text-foreground placeholder:text-muted-foreground/60 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all" />
+                  <input 
+                    type="number" 
+                    value={numberOfPeople} 
+                    onChange={(e) => setNumberOfPeople(e.target.value)} 
+                    placeholder="Ex: 2" 
+                    className="h-12 w-full resize-none rounded-xl border-2 border-border bg-card p-4 text-foreground placeholder:text-muted-foreground/60 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all" 
+                  />
                 </div>
               )}
               <Button variant="hero" size="lg" onClick={handleNext} disabled={!worksAlone} className="mt-6 w-full sm:w-auto">
@@ -240,7 +267,7 @@ const WizardFlow = ({ onComplete }: WizardFlowProps) => {
               <p className="mb-6 text-muted-foreground">Conta de água, luz, aluguel de espaço, internet exclusiva para o trabalho, etc.</p>
               <div className="flex flex-col gap-3">
                 {["Sim", "Não"].map((option) => (
-                  <Button key={option} variant={fixedExpenses === option ? "choiceSelected" : "choice"} size="lg" className="justify-start text-left" onClick={() => setFixedExpenses(option)}>
+                  <Button key={option} variant={fixedExpenses === option ? "choiceSelected" : "choice"} size="lg" className={choiceButtonClasses} onClick={() => setFixedExpenses(option)}>
                     {option}
                   </Button>
                 ))}
@@ -268,7 +295,7 @@ const WizardFlow = ({ onComplete }: WizardFlowProps) => {
               <h2 className="mb-8 text-2xl font-bold text-foreground md:text-3xl">Você já emite Nota Fiscal para os seus clientes?</h2>
               <div className="flex flex-col gap-3">
                 {["Sim", "Não"].map((option) => (
-                  <Button key={option} variant={issuesInvoices === option ? "choiceSelected" : "choice"} size="lg" className="justify-start text-left" onClick={() => setIssuesInvoices(option)}>
+                  <Button key={option} variant={issuesInvoices === option ? "choiceSelected" : "choice"} size="lg" className={choiceButtonClasses} onClick={() => setIssuesInvoices(option)}>
                     {option}
                   </Button>
                 ))}
@@ -285,7 +312,7 @@ const WizardFlow = ({ onComplete }: WizardFlowProps) => {
             </motion.div>
           )}
 
-          {/* STEP 6: Outras Empresas (Impeditivo MEI) */}
+          {/* STEP 6: Outras Empresas */}
           {step === 6 && (
             <motion.div
               key="step6"
@@ -302,7 +329,7 @@ const WizardFlow = ({ onComplete }: WizardFlowProps) => {
               <h2 className="mb-8 text-2xl font-bold text-foreground md:text-3xl">Você já tem alguma empresa no seu nome ou é sócio de algum negócio?</h2>
               <div className="flex flex-col gap-3">
                 {["Sim, já tenho um CNPJ ou sou sócio", "Não, este será meu primeiro negócio formal"].map((option) => (
-                  <Button key={option} variant={hasOtherCompany === option ? "choiceSelected" : "choice"} size="lg" className="justify-start text-left" onClick={() => setHasOtherCompany(option)}>
+                  <Button key={option} variant={hasOtherCompany === option ? "choiceSelected" : "choice"} size="lg" className={choiceButtonClasses} onClick={() => setHasOtherCompany(option)}>
                     {option}
                   </Button>
                 ))}
@@ -313,7 +340,7 @@ const WizardFlow = ({ onComplete }: WizardFlowProps) => {
             </motion.div>
           )}
 
-          {/* STEP 7: Vínculos e Benefícios (Impeditivo / Alertas) */}
+          {/* STEP 7: Vínculos e Benefícios */}
           {step === 7 && (
             <motion.div
               key="step7"
@@ -335,7 +362,7 @@ const WizardFlow = ({ onComplete }: WizardFlowProps) => {
                   "Sou Servidor Público",
                   "Recebo benefício (Seguro-desemprego, auxílio, etc)"
                 ].map((option) => (
-                  <Button key={option} variant={hasBenefitsOrCLT === option ? "choiceSelected" : "choice"} size="lg" className="justify-start text-left" onClick={() => setHasBenefitsOrCLT(option)}>
+                  <Button key={option} variant={hasBenefitsOrCLT === option ? "choiceSelected" : "choice"} size="lg" className={choiceButtonClasses} onClick={() => setHasBenefitsOrCLT(option)}>
                     {option}
                   </Button>
                 ))}
@@ -363,7 +390,7 @@ const WizardFlow = ({ onComplete }: WizardFlowProps) => {
               <h2 className="mb-8 text-2xl font-bold text-foreground md:text-3xl">Mais ou menos, quanto você ganha por mês com isso?</h2>
               <div className="flex flex-col gap-3">
                 {incomeOptions.map((option) => (
-                  <Button key={option} variant={income === option ? "choiceSelected" : "choice"} size="lg" className="justify-start text-left" onClick={() => handleSelectIncome(option)}>
+                  <Button key={option} variant={income === option ? "choiceSelected" : "choice"} size="lg" className={choiceButtonClasses} onClick={() => handleSelectIncome(option)}>
                     {option}
                   </Button>
                 ))}
