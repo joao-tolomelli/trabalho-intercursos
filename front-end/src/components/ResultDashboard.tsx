@@ -14,12 +14,12 @@ import {
   Briefcase,
   BrainCircuit,
   X,
-  Star
+  ExternalLink,
+  MessageSquareHeart // Ícone novo para a seção de feedback
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { generateSummaryPDF } from "@/utils/generatePDF";
 
-// Tipagem baseada no JSON retornado pela sua API
 export interface AIResponseData {
   alerta_impeditivo: string | null;
   classificacao_pj: string;
@@ -39,7 +39,6 @@ interface ResultDashboardProps {
   onRestart: () => void;
 }
 
-// Cards fixos para instruções gerais
 const staticCards = [
   {
     icon: FileText,
@@ -86,30 +85,19 @@ const cardVariants = {
 };
 
 const ResultDashboard = ({ data, onRestart }: ResultDashboardProps) => {
-  // Estados do Modal de Feedback
   const [showFeedbackModal, setShowFeedbackModal] = useState(false);
-  const [rating, setRating] = useState(0);
-  const [feedbackText, setFeedbackText] = useState("");
+  const [hasClickedForm, setHasClickedForm] = useState(false);
 
   const handleDownloadPDF = () => {
-    // Chama a função passando os dados da IA que já estão na prop 'data'
     generateSummaryPDF(data);
-    setShowFeedbackModal(false); // Fecha o modal após o download
-  };
-
-  const submitFeedback = async () => {
-    // 1. Aqui você faz o Axios POST para salvar o feedback
-    //console.log("Feedback enviado:", { rating, text: feedbackText });
-    
-    // 2. Após confirmar o envio, gera o PDF automaticamente
-    handleDownloadPDF();
+    setShowFeedbackModal(false);
+    setHasClickedForm(false); 
   };
 
   return (
     <div className="relative min-h-screen px-6 py-12 md:py-20">
       <div className="mx-auto max-w-5xl">
         
-        {/* Bloco de Alerta Impeditivo */}
         {data.alerta_impeditivo && (
           <motion.div
             initial={{ opacity: 0, y: -20 }}
@@ -119,12 +107,11 @@ const ResultDashboard = ({ data, onRestart }: ResultDashboardProps) => {
             <AlertTriangle className="mt-0.5 h-6 w-6 shrink-0 text-destructive" />
             <div>
               <h3 className="mb-1 font-bold text-destructive">Atenção Importante</h3>
-              <p className="text-sm text-gray-800 leading-relaxed">{data.alerta_impeditivo}</p>
+              <p className="text-sm leading-relaxed">{data.alerta_impeditivo}</p>
             </div>
           </motion.div>
         )}
 
-        {/* Header Dinâmico */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -145,14 +132,12 @@ const ResultDashboard = ({ data, onRestart }: ResultDashboardProps) => {
           </p>
         </motion.div>
 
-        {/* Cards Grid */}
         <motion.div
           variants={containerVariants}
           initial="hidden"
           animate="visible"
           className="mb-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3"
         >
-          {/* Card Dinâmico 1: CNAE sugerido */}
           {data.cnae_principal && (
             <motion.div
               variants={cardVariants}
@@ -171,7 +156,6 @@ const ResultDashboard = ({ data, onRestart }: ResultDashboardProps) => {
             </motion.div>
           )}
 
-          {/* Card Dinâmico 2: Justificativa da IA */}
           <motion.div
             variants={cardVariants}
             className="rounded-2xl border-2 border-primary/20 bg-primary/5 p-6 shadow-sm transition-shadow hover:shadow-md sm:col-span-2 lg:col-span-2"
@@ -187,7 +171,6 @@ const ResultDashboard = ({ data, onRestart }: ResultDashboardProps) => {
             </p>
           </motion.div>
 
-          {/* Cards Estáticos */}
           {staticCards.map((card) => (
             <motion.div
               key={card.title}
@@ -207,12 +190,12 @@ const ResultDashboard = ({ data, onRestart }: ResultDashboardProps) => {
           ))}
         </motion.div>
 
-        {/* Actions (Botões principais) */}
+        {/* Actions Principais */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.8 }}
-          className="flex flex-col items-center gap-4 sm:flex-row sm:justify-center"
+          className="mb-16 flex flex-col items-center gap-4 sm:flex-row sm:justify-center"
         >
           <Button variant="outline" size="lg" onClick={onRestart} className="w-full sm:w-auto">
             <RotateCcw className="mr-2 h-4 w-4" />
@@ -223,9 +206,36 @@ const ResultDashboard = ({ data, onRestart }: ResultDashboardProps) => {
             Baixar resumo em PDF
           </Button>
         </motion.div>
+
+        {/* NOVA SEÇÃO: Banner de Feedback Estático no rodapé */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 1 }}
+          className="mx-auto max-w-2xl overflow-hidden rounded-2xl border border-border bg-secondary/30 text-center"
+        >
+          <div className="p-8">
+            <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
+              <MessageSquareHeart className="h-6 w-6 text-primary" />
+            </div>
+            <h3 className="mb-2 text-lg font-bold text-foreground">Gostou da ferramenta?</h3>
+            <p className="mb-6 text-sm text-muted-foreground">
+              Este projeto faz parte de um trabalho acadêmico. Sua avaliação não leva nem um minuto e me ajuda a validar a utilidade da aplicação!
+            </p>
+            <a
+              href="https://docs.google.com/forms/d/e/1FAIpQLSf6PH3dcB-D36GF431b2tpv-dVZgoYoTAarJ87LVvVGqXmz9w/viewform?usp=dialog" // Lembre-se de colocar o seu link aqui
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 rounded-xl bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground shadow-sm transition-colors hover:bg-primary/90"
+            >
+              <ExternalLink className="h-4 w-4" />
+              Avaliar Projeto
+            </a>
+          </div>
+        </motion.div>
       </div>
 
-      {/* Modal de Feedback */}
+      {/* Modal de Feedback do PDF (mantido igual) */}
       <AnimatePresence>
         {showFeedbackModal && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-4 backdrop-blur-sm">
@@ -244,60 +254,31 @@ const ResultDashboard = ({ data, onRestart }: ResultDashboardProps) => {
 
               <h3 className="mb-2 mt-2 text-center text-xl font-bold text-foreground">Seu PDF está pronto!</h3>
               <p className="mb-6 text-center text-sm text-muted-foreground">
-                Como este é um projeto universitário, sua avaliação me ajuda muito a validar a ferramenta. Como foi sua experiência?
+                Como este é um projeto acadêmico, sua avaliação é fundamental. Clique no link abaixo para responder um formulário rápido e o download será liberado.
               </p>
 
-              {/* Sistema de Estrelas */}
-              <div className="mb-6 flex justify-center gap-2">
-                {[1, 2, 3, 4, 5].map((star) => (
-                  <button
-                    key={star}
-                    onClick={() => setRating(star)}
-                    className={`transition-transform hover:scale-110 ${
-                      rating >= star ? "text-yellow-400" : "text-muted-foreground/30"
-                    }`}
-                  >
-                    <Star className="h-10 w-10 fill-current" />
-                  </button>
-                ))}
+              <div className="mb-8 flex justify-center">
+                <a
+                  href="https://docs.google.com/forms/d/e/1FAIpQLSf6PH3dcB-D36GF431b2tpv-dVZgoYoTAarJ87LVvVGqXmz9w/viewform?usp=dialog" // E coloque o link aqui também
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() => setHasClickedForm(true)}
+                  className="flex items-center gap-2 rounded-xl bg-primary/10 px-4 py-3 text-sm font-semibold text-primary transition-colors hover:bg-primary/20"
+                >
+                  <ExternalLink className="h-4 w-4" />
+                  Abrir Formulário de Avaliação
+                </a>
               </div>
 
-              {/* Caixa de Texto Opcional */}
-              <AnimatePresence>
-                {rating > 0 && (
-                  <motion.div
-                    initial={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: "auto" }}
-                    exit={{ opacity: 0, height: 0 }}
-                    className="mb-6 overflow-hidden"
-                  >
-                    <textarea
-                      value={feedbackText}
-                      onChange={(e) => setFeedbackText(e.target.value)}
-                      placeholder="Conte mais sobre o porquê dessa nota (opcional)"
-                      className="w-full resize-none rounded-xl border-2 border-border bg-background p-3 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
-                      rows={3}
-                    />
-                  </motion.div>
-                )}
-              </AnimatePresence>
-
-              {/* Ações do Modal */}
               <div className="flex flex-col gap-3">
                 <Button 
                   size="lg" 
-                  disabled={rating === 0} 
-                  onClick={submitFeedback}
-                  className="w-full"
-                >
-                  Enviar Feedback e Baixar PDF
-                </Button>
-                <button 
+                  disabled={!hasClickedForm} 
                   onClick={handleDownloadPDF}
-                  className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground hover:underline"
+                  className="relative w-full overflow-hidden transition-all"
                 >
-                  Pular e baixar direto
-                </button>
+                  {hasClickedForm ? "Baixar meu PDF agora" : "Aguardando avaliação..."}
+                </Button>
               </div>
             </motion.div>
           </div>
