@@ -171,7 +171,7 @@ const ResultDashboard = ({ data, onRestart }: ResultDashboardProps) => {
             </p>
           </motion.div>
 
-          {staticCards.map((card) => (
+          {/* staticCards.map((card) => (
             <motion.div
               key={card.title}
               variants={cardVariants}
@@ -187,7 +187,7 @@ const ResultDashboard = ({ data, onRestart }: ResultDashboardProps) => {
                 {card.text}
               </p>
             </motion.div>
-          ))}
+          ))*/}
         </motion.div>
 
         {/* Actions Principais */}
